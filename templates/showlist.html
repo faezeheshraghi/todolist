@@ -1,0 +1,21 @@
+<h4 class="text-center mb-10">Review Your List</h4>
+{% for l in list%}
+<div class="row">
+	<aside class="col-lg-8">
+
+    <div class="card">
+      <h5 class="card-header">Title</h5>
+      <div class="card-body">
+        <p class="card-text mb-0">{{l.titel}}</p>
+      </div>
+      <aside class="col-lg-8">
+
+        <div class="card">
+          <h5 class="card-header">Note</h5>
+          <div class="card-body">
+            <p class="card-text mb-0">{{l.note}}</p>
+            <a href="{% url 'deletelist' l.id %}" class="btn btn-primary">Delete</a>
+            <a href="{% url 'updatelist' l.id %}" class="btn btn-primary">Edite</a>
+          </div>
+    </div>
+{% endfor%}

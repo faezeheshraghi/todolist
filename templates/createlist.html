@@ -1,0 +1,14 @@
+<form  action="{% url 'add_list' %}" method="POST">
+{% csrf_token %}
+<div class="form-row">
+    <div class="col form-group">
+      <label for="">Title</label>
+      <input type="text" name="Title" class="form-control" required>
+    </div>
+    <div class="col form-group">
+      <label for="">Note</label>
+      <input type="text" name="Note" class="form-control" required>
+    </div>
+  </div>
+  <button type="submit" name="submit" class="btn btn-primary btn-block" >Create</button>
+</form>
