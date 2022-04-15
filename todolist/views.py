@@ -1,56 +1,38 @@
 from django.shortcuts import render,redirect
 from createlist.models import To_Do_List
 from createlist.forms import To_Do_ListForm
+from rest_framework.decorators import api_view
+from rest_framework.response import Response 
+from rest_framework import status
+from createlist.serializers import ListSerializer
+from rest_framework import generics, mixins, status
+
 
 def home(request):
 
     return render(request, 'home.html')
 
-def _list_id(request):
-    list = request.session.session_key
-    if not list:
-        list = request.session.create()
-    return list
-
-def createlist(request):
-
-        return render(request , 'createlist.html')
-def add_list(request):
-    try:
-        list = To_Do_List.objects.get(list_id=_list_id(request)
-        ,titel=request.POST['Title'],note=request.POST['Note'])
+class PostList(generics.ListAPIView):
+    queryset = To_Do_List.objects.all()
+    serializer_class = ListSerializer
 
 
-    except To_Do_List.DoesNotExist:
-        list =  To_Do_List.objects.create(
-                list_id =_list_id(request),
-                titel=request.POST['Title'],
-                note=request.POST['Note'],
-            )
-    list.save()
-    return redirect( 'createlist')
-def showlist(request):
-    list = To_Do_List.objects.filter(list_id=_list_id(request)).order_by('id')
-    context = {
-        'list' : list,
+class Create(generics.CreateAPIView):
+    queryset = To_Do_List.objects.all()
+    serializer_class = ListSerializer
 
-    }
-    return render(request,'showlist.html',context)
+class Update(generics.UpdateAPIView, mixins.DestroyModelMixin):
+    serializer_class = ListSerializer
 
-def deletelist(request,id):
-    list = To_Do_List.objects.get(id =id)
-    list.delete()
-    return redirect('showlist')
-def updatelist(request,id):
-    list = To_Do_List.objects.get(id=id)
-    context = {
-        'list' : list,
+    def get_queryset(self):
+        return To_Do_List.objects.filter(id = self.kwargs['pk'])
 
-    }
-    return  render(request,'updatelist.html',context)
-def updateField(request,id):
-    list = To_Do_List.objects.get(id=id)
-    list.titel= request.POST['Title']
-    list.note = request.POST['Note']
-    list.save()
-    return  redirect('showlist')
+    def perform_create(self, serializer):
+         if self.get_queryset().exists():
+             serializer.save()
+    def delete(self, requests, *args, **kwargs):
+        if self.get_queryset().exists():
+            self.get_queryset().delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            raise ValidationError('You never insert this id!')

@@ -10,3 +10,5 @@ class To_Do_List(models.Model):
 
     def __str__(self):
         return self.list_id
+    class Meta:
+        ordering = ['date_add']

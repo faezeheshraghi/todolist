@@ -14,16 +14,24 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,include
 from .import views
+from django.conf.urls import url
+from rest_framework_swagger.views import get_swagger_view
 
+schema_view = get_swagger_view(title='Pastebin API')
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.home, name='home'),
-    path('createlist/', views.createlist, name='createlist'),
-    path('add_list/', views.add_list, name='add_list'),
-    path('showlist/', views.showlist, name='showlist'),
-    path('deletelist/<int:id>/', views.deletelist, name='deletelist'),
-    path('updatelist/<int:id>/', views.updatelist, name='updatelist'),
-    path('updateField/<int:id>/', views.updateField, name='updateField'),
+    # path('', views.home, name='home'),
+    # path('createlist/', views.createlist, name='createlist'),
+    # path('add_list/', views.add_list, name='add_list'),
+    path('api/posts', views.PostList.as_view()),
+    path('create/posts', views.Create.as_view()),
+    path('api/posts/<int:pk>/Update', views.Update.as_view()),
+    # path('showlist',views.showlist),
+    # path('deletelist/<int:id>/', views.deletelist, name='deletelist'),
+    # path('updatelist/<int:id>/', views.updatelist, name='updatelist'),
+    # path('updateField/<int:id>/', views.updateField, name='updateField'),
+    path('api-auth/', include('rest_framework.urls')),
+    url(r'^$', schema_view),
 ]
